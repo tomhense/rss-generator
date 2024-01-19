@@ -1,0 +1,17 @@
+fieldset {
+	border: none;
+	margin: 1rem;
+}
+
+fieldset legend {
+	font-size: 1.5rem;
+}
+
+.feed-preview-card {
+	margin: 1rem;
+}
+
+.wrapper {
+	padding: 1rem;
+	margin: 0.25rem;
+}
