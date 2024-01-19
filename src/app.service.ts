@@ -103,7 +103,7 @@ export class AppService {
 		const root = parse(respText);
 
 		const feed = new Feed({
-			title: root.querySelector(query["feed-title"])?.text,
+			title: query["feed-title"],
 			id: feedUrl.toString(),
 			link: feedUrl.toString(),
 			favicon: "https://www.google.com/s2/favicons?domain=" + feedUrl.host,
