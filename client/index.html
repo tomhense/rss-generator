@@ -7,13 +7,18 @@
 		<link rel="stylesheet" href="/static/css/materialize.min.css" />
 	</head>
 	<body>
-		<div class="container">
+		<div class="">
 			<h1 class="center-align">Atom feed generator</h1>
 
 			<div class="row">
 				<div class="col m12 l6">
 					<div class="z-depth-3 wrapper">
-						<form action="/api/generatefeed" method="get" class="row" id="form">
+						<form action="/api/generatefeed" method="get" class="row" id="form" target="_blank" autocomplete="off" spellcheck="false">
+							<div class="input-field col s12">
+								<label for="shared-secret">Shared secret</label>
+								<input type="text" name="shared-secret" required placeholder="Your shared secret" />
+							</div>
+
 							<fieldset class="z-depth-1">
 								<legend>Feed</legend>
 								<div class="input-field col s12">
@@ -81,15 +86,28 @@
 									<input type="text" name="entry-category-selector" />
 								</div>
 								<div>
-									<div class="input-field col s3">
+									<div class="input-field col s6">
 										<p>
-											<label for="entry-fetch-content">
-												<input type="checkbox" name="entry-fetch-content" id="entry-fetch-content" class="filled-in" />
-												<span>Fetch content</span>
+											<label>
+												<input type="radio" name="entry-fetch-content-type" value="none" checked />
+												<span>Don't fetch content</span>
+											</label>
+										</p>
+										<p>
+											<label>
+												<input type="radio" name="entry-fetch-content-type" value="article" />
+												<span>Fetch article content</span>
+											</label>
+										</p>
+										<p>
+											<label>
+												<input type="radio" name="entry-fetch-content-type" value="component" />
+												<span>Use html component as content</span>
 											</label>
 										</p>
 									</div>
-									<div class="input-field col s9">
+
+									<div class="input-field col s6">
 										<label for="entry-content-selector">Content CSS selector</label>
 										<input type="text" name="entry-content-selector" />
 									</div>
@@ -97,16 +115,33 @@
 							</fieldset>
 
 							<div class="col s12">
-								<input type="button" value="Try out" class="waves-effect waves-light btn btn-large white-text" id="try-button" />
-								<input type="submit" value="Get feed" class="waves-effect waves-light btn btn-large white-text" />
+								<!-- Interestingly the html button tag has the default role of "submit" so override it here -->
+								<button type="button" class="waves-effect waves-light btn btn-large white-text" id="try-button">Preview</button>
 							</div>
 						</form>
 					</div>
 				</div>
 
 				<div class="col m12 l6">
-					<div class="wrapper z-depth-3" id="feed-preview-container">
+					<div class="wrapper z-depth-3">
 						<h3>Preview</h3>
+						<div id="feed-preview-container"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="z-depth-3 wrapper">
+				<div class="row">
+					<div class="input-field col s10">
+						<label for="form-url-input">Parse previously generated feed url</label>
+						<input type="text" name="form-url-input" id="form-url-input" />
+					</div>
+					<div class="input-field col s2">
+						<button class="waves-effect waves-light btn btn-large white-text" id="parse-url-button">Parse</button>
+					</div>
+					<div class="col s12">
+						<b>Feed url:</b>
+						<a id="form-url-display"></a>
 					</div>
 				</div>
 			</div>

@@ -1,4 +1,5 @@
 export interface GenerateFeedDto {
+	"shared-secret": string;
 	"feed-url": string;
 	"feed-title": string;
 	"feed-entry-selector": string;
@@ -13,6 +14,6 @@ export interface GenerateFeedDto {
 	"entry-published-dateformat": string;
 	"entry-author-selector": string;
 	"entry-category-selector": string;
-	"entry-fetch-content": boolean;
+	"entry-fetch-content-type": string;
 	"entry-content-selector": string;
 }

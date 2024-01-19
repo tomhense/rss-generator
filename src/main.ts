@@ -7,6 +7,11 @@ async function bootstrap() {
 	const GLOBAL_PREFIX = process.env.URL_PREFIX || "";
 	const PORT = process.env.PORT || 3000;
 
+	if (!process.env.SHARED_SECRET) {
+		console.error("SHARED_SECRET environment variable is not set. Exiting.");
+		process.exit(1);
+	}
+
 	app.setGlobalPrefix(GLOBAL_PREFIX);
 
 	// Enable CORS (ToDo: Remove later)
