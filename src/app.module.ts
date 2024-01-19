@@ -3,6 +3,7 @@ import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 import { AppController } from "./app.controller";
 import { CacheModule } from "@nestjs/cache-manager";
+import { AppService } from "./app.service";
 
 @Module({
 	imports: [
@@ -14,5 +15,6 @@ import { CacheModule } from "@nestjs/cache-manager";
 		CacheModule.register(),
 	],
 	controllers: [AppController],
+	providers: [AppService],
 })
 export class AppModule {}

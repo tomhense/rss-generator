@@ -1,4 +1,4 @@
-export interface GenerateFeed {
+export interface GenerateFeedDto {
 	"feed-url": string;
 	"feed-title": string;
 	"feed-entry-selector": string;
