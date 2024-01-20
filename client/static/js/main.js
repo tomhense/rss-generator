@@ -49,20 +49,23 @@ async function fetchRss(rssUrl) {
 	}
 }
 
-document.getElementById("try-button").addEventListener("click", () => {
+function getFormUrl() {
 	const form = document.getElementById("form");
 	const formData = new FormData(form);
 	const search = new URLSearchParams(formData);
-	fetchRss("/api/generatefeed?" + search.toString());
+
+	const feedUrl = new URL(form.getAttribute("action"), window.location.origin);
+	feedUrl.search = search;
+	return feedUrl;
+}
+
+document.getElementById("try-button").addEventListener("click", () => {
+	fetchRss(getFormUrl());
 });
 
 function onFormUpdate() {
-	const formData = new FormData(form);
-	const search = new URLSearchParams(formData);
-	window.history.replaceState(null, null, "?" + search.toString());
-
-	const feedUrl = new URL("/api/generatefeed", window.location.origin);
-	feedUrl.search = search;
+	const feedUrl = getFormUrl();
+	window.history.replaceState(null, null, "?" + feedUrl.search);
 
 	const urlDisplay = document.getElementById("form-url-display");
 	urlDisplay.textContent = feedUrl;

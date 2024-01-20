@@ -4,6 +4,8 @@ import { Feed, Item } from "feed";
 import { HttpException, Inject, Injectable } from "@nestjs/common";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
+import Parser from "rss-parser";
+import { Category } from "feed/lib/typings";
 
 let d3TimeFormat;
 //(async () => {
@@ -159,5 +161,91 @@ export class AppService {
 		}
 
 		return feed.atom1();
+	}
+
+	async processFeed(query: GenerateFeedDto): Promise<string> {
+		if (query["shared-secret"] !== process.env.SHARED_SECRET) {
+			throw new HttpException("Unauthorized", 401);
+		}
+
+		const feedUrl = new URL(query["feed-url"]);
+		const respText = await fetchCached(this.cacheManager, feedUrl.toString(), FEED_FETCH_CACHE_TTL);
+
+		const feedParser = new Parser();
+
+		const originalFeed = await feedParser.parseString(respText);
+
+		const newFeed = new Feed({
+			title: originalFeed.title,
+			id: feedUrl.toString(),
+			link: feedUrl.toString(),
+			favicon: originalFeed.image?.url || "https://www.google.com/s2/favicons?domain=" + feedUrl.host,
+			copyright: "",
+			description: originalFeed.description,
+		});
+
+		originalFeed.categories?.forEach((category) => {
+			newFeed.addCategory(category);
+		});
+
+		const feedItems = Array.from(originalFeed.items).filter((item) => {
+			if (query["entry-link-filter"] && !new RegExp(query["entry-title-filter"]).test(item.link)) {
+				return false;
+			}
+			if (query["entry-title-filter"] && !new RegExp(query["entry-title-filter"]).test(item.title)) {
+				return false;
+			}
+			if (query["entry-description-filter"] && !new RegExp(query["entry-description-filter"]).test(item.description)) {
+				return false;
+			}
+			if (query["entry-category-filter"] && !item.categories.every((category) => !new RegExp(query["entry-category-filter"]).test(category))) {
+				return false;
+			}
+			if (query["entry-author-filter"] && !new RegExp(query["entry-author-filter"]).test(item.author)) {
+				return false;
+			}
+			return true;
+		});
+
+		if (query["entry-fetch-content"]) {
+			const feedEntriesPromises: Promise<void>[] = [];
+
+			for (const entry of feedItems) {
+				feedEntriesPromises.push(
+					new Promise(async (resolve) => {
+						const entryContent = await fetchCached(this.cacheManager, entry.link, ARTICLE_FETCH_CACHE_TTL);
+						const contentRoot = parse(entryContent).querySelector(query["entry-content-selector"] || "body");
+						transformRelativeUrlsToAbsolute(contentRoot, entry.link);
+						sanitizeHtml(contentRoot);
+						entry.content = contentRoot.toString();
+
+						resolve();
+					})
+				);
+			}
+
+			await Promise.all(feedEntriesPromises);
+		}
+
+		feedItems.forEach((item) => {
+			newFeed.addItem({
+				title: item.title,
+				id: item.link,
+				link: item.link,
+				description: item.description,
+				date: new Date(item.isoDate),
+				published: new Date(item.pubDate),
+				content: item.content,
+				category: item.categories.map((category) => ({
+					name: category,
+				})),
+				author: item.author.map((author) => ({
+					name: author,
+				})),
+				image: item.image?.url,
+			});
+		});
+
+		return newFeed.atom1();
 	}
 }

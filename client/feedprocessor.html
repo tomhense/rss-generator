@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Static website</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="/static/css/main.css" />
+		<link rel="stylesheet" href="/static/css/materialize.min.css" />
+	</head>
+	<body>
+		<nav>
+			<div class="nav-wrapper">
+				<a href="#" class="brand-logo">RSS Tools</a>
+				<ul id="nav-mobile" class="right hide-on-med-and-down">
+					<li><a href="/">Atom feed generator</a></li>
+					<li><a href="/feedprocessor.html">Atom feed processor</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class="">
+			<h1 class="center-align">Atom feed processor</h1>
+
+			<div class="row">
+				<div class="col m12 l6">
+					<div class="z-depth-3 wrapper">
+						<form action="/api/processfeed" method="get" class="row" id="form" target="_blank" autocomplete="off" spellcheck="false">
+							<div class="input-field col s12">
+								<label for="shared-secret">Shared secret</label>
+								<input type="text" name="shared-secret" required placeholder="Your shared secret" />
+							</div>
+
+							<div class="input-field col s12">
+								<label for="feed-url">Feed URL</label>
+								<input type="text" name="feed-url" required placeholder="https://www.example.com" />
+							</div>
+
+							<fieldset class="z-depth-1">
+								<legend>Filters</legend>
+								<div class="input-field col s12">
+									<label for="feed-url">Link RegEx filter</label>
+									<input type="text" name="feed-url" />
+								</div>
+								<div class="input-field col s12">
+									<label for="feed-title">Title RegEx filter</label>
+									<input type="text" name="feed-title" />
+								</div>
+								<div class="input-field col s12">
+									<label for="feed-title">Description RegEx filter</label>
+									<input type="text" name="feed-title" />
+								</div>
+								<div class="input-field col s12">
+									<label for="feed-title">Category RegEx filter</label>
+									<input type="text" name="feed-title" />
+								</div>
+								<div class="input-field col s12">
+									<label for="feed-title">Author RegEx filter</label>
+									<input type="text" name="feed-title" />
+								</div>
+							</fieldset>
+
+							<fieldset class="z-depth-1">
+								<legend>Content</legend>
+								<div class="input-field col s4">
+									<p>
+										<label for="entry-fetch-content">
+											<input type="checkbox" id="entry-fetch-content" name="entry-fetch-content" class="filled-in" />
+											<span>Fetch content</span>
+										</label>
+									</p>
+								</div>
+								<div class="input-field col s8">
+									<label for="entry-content-selector">Content CSS selector</label>
+									<input type="text" name="entry-content-selector" />
+								</div>
+							</fieldset>
+
+							<div class="col s12">
+								<!-- Interestingly the html button tag has the default role of "submit" so override it here -->
+								<button type="button" class="waves-effect waves-light btn btn-large white-text" id="try-button">Preview</button>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<div class="col m12 l6">
+					<div class="wrapper z-depth-3">
+						<h3>Preview</h3>
+						<div id="feed-preview-container"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="z-depth-3 wrapper" style="margin: 1rem">
+				<div class="row">
+					<div class="input-field col s10">
+						<label for="form-url-input">Parse previously generated feed url</label>
+						<input type="text" name="form-url-input" id="form-url-input" />
+					</div>
+					<div class="input-field col s2">
+						<button class="waves-effect waves-light btn btn-large white-text" id="parse-url-button">Parse</button>
+					</div>
+					<div class="col s12">
+						<b>Feed url:</b>
+						<a id="form-url-display"></a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<template id="entry-component-template">
+			<div class="card-panel grey lighten-4 z-depth-4 feed-preview-card">
+				<div class="row valign-wrapper">
+					<div class="col s2">
+						<img src="" alt="" class="circle responsive-img entry-image" style="max-width: 4rem" />
+					</div>
+					<div class="col s10">
+						<a class="entry-link" href="" target="_blank">
+							<h5><b class="entry-title"></b></h5>
+						</a>
+						<div class="entry-metadata grey-text text-darken-1">
+							<p class="entry-updated-date"></p>
+							<p class="entry-published-date"></p>
+							<p class="entry-category"></p>
+							<p class="entry-author"></p>
+						</div>
+						<p class="entry-description"></p>
+					</div>
+				</div>
+			</div>
+		</template>
+
+		<script src="/static/js/materialize.min.js"></script>
+		<script src="/static/js/main.js"></script>
+	</body>
+</html>

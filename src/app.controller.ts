@@ -17,4 +17,12 @@ export class AppController {
 	async generateFeed(@Query() query: GenerateFeedDto): Promise<string> {
 		return this.appService.generateFeed(query);
 	}
+
+	@UseInterceptors(CacheInterceptor)
+	@CacheTTL(RESPONSE_CACHE_TTL)
+	@Get("api/processfeed")
+	@Header("Content-Type", "application/xml")
+	async processFeed(@Query() query: GenerateFeedDto): Promise<string> {
+		return this.appService.processFeed(query);
+	}
 }
